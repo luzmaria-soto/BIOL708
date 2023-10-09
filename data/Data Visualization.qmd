@@ -20,8 +20,11 @@ library(here)
 
 install.packages("tidyverse")
 install.packages('readr')
+
 library(readr)
 library(tidyverse)
+library(scales)
+
 
 #Load National Park data from OHI workshop
 #National Parks in California
@@ -44,6 +47,36 @@ mass <- read_csv("https://raw.githubusercontent.com/OHI-Science/data-science-tra
 
 #make some plots, need to tell what dataframe you want to work with, geoms come to play
 
-ggplot(ca)+ geom_point(aes(x=year, y=visitors)) 
+ggplot(ca)+ geom_point(aes(x=year, y=visitors,color=park_name))+labs(y='visitation', title='National Park Visitors')+
+  theme_minimal()+
+  theme(legend.title=element_blank())
+
+#create a new plot for SE  parks showing scatterplot of number of visitors by state
+
+ggplot(se)+geom_point(aes(x=year, y=visitors, color=state))+
+  labs(y='visitation', title = 'Southeast United States National Park Visitors') +
+  theme(axis.text.x = element_text(angle = 45, size=12))
+
+#how do y ou rotate the text 45 degrees
+#look up ggplot2 cheatsheet
+
+#what if you wanted to use a different type of plot besides a point, geompoint for a scatterplot
+
+#create a box plot for SE parks
+ggplot(se) + geom_boxplot(aes(x=park_name, y=visitors)) +
+  theme(axis.text.x = element_text(size=3))
+
+#could use something called facetting to separate and replicate things 
+
+ggplot(se)+ geom_point(aes(x=year,y=visitors)) +
+  facet_wrap(~state, scales = 'free') +
+  xlim(c(1930,2020)) + scale_y_continuous(labels = label_comma())
+
+#show a line for visitors at SE parks over time with points
+
+ggplot(se)+ geom_line (aes(x=year, y=visitors, color=park_name ))+
+  geom_point(aes(x=year, y=visitors,color=park_name))+
+  geom_smooth(aes(x=year, y=visitors, color=park_name))
+
 
 ```
